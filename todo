@@ -59,16 +59,25 @@ case "$mode" in
         ;;
     "list") # Showing list of ToDos
         echo "LIST OF TASKS"
+        todoCount=0
+        doingCount=0
+        doneCount=0
         for i in $(seq 1 ${config[todo_count]}); do
             if [ "${config[todo_status_$i]}" = "TODO" ]; then
                 echo -e "  [ ] $i.\t\t ${config[todo_$i]}"
+                todoCount=$((todoCount+1))
             elif [ "${config[todo_status_$i]}" = "DOING" ]; then
                 echo -e "  [O] $i.\t\t ${config[todo_$i]}"
+                doingCount=$((doingCount+1))
             elif [ "${config[todo_status_$i]}" = "DONE" ]; then
                 echo -e "  [X] $i.\t\t ${config[todo_$i]}"
+                doneCount=$((doneCount+1))
             fi
         done
         echo
+        echo "Tasks to do: $todoCount"
+        echo "Tasks doing: $doingCount"
+        echo "Tasks done:  $doneCount"
         echo "Use 'todo --help' to get list of options."
         ;;
     "listScope") # Showing list of ToDos with scopes
