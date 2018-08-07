@@ -37,9 +37,27 @@ case "$mode" in
         echo "    -h, --help                - displays help message"
         ;;
     "list") # Showing list of ToDos
+        echo "To do:"
         for i in $(seq 1 ${config[todo_count]}); do
-            echo $i
+            if [ "${config[todo_status_$i]}" = "TODO" ]; then
+                echo -e "  [ ] $i.\t\t ${config[todo_$i]}"
+            fi
         done
+        echo
+        echo "Doing:"
+        for i in $(seq 1 ${config[todo_count]}); do
+            if [ "${config[todo_status_$i]}" = "DOING" ]; then
+                echo -e "  [O] $i.\t\t ${config[todo_$i]}"
+            fi
+        done
+        echo
+        echo "Done:"
+        for i in $(seq 1 ${config[todo_count]}); do
+            if [ "${config[todo_status_$i]}" = "DONE" ]; then
+                echo -e "  [X] $i.\t\t ${config[todo_$i]}"
+            fi
+        done
+        echo
         ;;
     "create") # Creating new element on list
         echo "Created"
