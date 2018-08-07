@@ -5,19 +5,21 @@ FILE=~/.todo_list.todo
 # checking flags and setting mode based on these flags
 if [ "$#" -ne 0 ]; then
     case "$1" in
-        "--create")     mode=create ;;
-        "-c")           mode=create ;;
-        "--done")       mode=done ;;
-        "-d")           mode=done ;;
-        "--doing")      mode=doing ;;
-        "-D")           mode=doing ;;
-        "--help")       mode=help ;;
-        "-h")           mode=help ;;
-        "--remove")     mode=remove ;;
-        "-r")           mode=remove ;;
-        "--todo")       mode=todo ;;
-        "-t")           mode=todo ;;
-        *)              mode=help ;;
+        "--create")      mode=create ;;
+        "-c")            mode=create ;;
+        "--done")        mode=done ;;
+        "-d")            mode=done ;;
+        "--doing")       mode=doing ;;
+        "-D")            mode=doing ;;
+        "--help")        mode=help ;;
+        "-h")            mode=help ;;
+        "--remove")      mode=remove ;;
+        "-r")            mode=remove ;;
+        "--remove-done") mode=removeDone ;;
+        "-R")            mode=removeDone ;;
+        "--todo")        mode=todo ;;
+        "-t")            mode=todo ;;
+        *)               mode=help ;;
     esac
 else
     mode=list
@@ -84,6 +86,26 @@ case "$mode" in
         unset config["todo_status_$index"]
         echo "Entry '$entry' has been removed."
         ;;
+    "removeDone") # Removes all Done entries
+        while true; do
+            read -p "Do you really wish to remove all 'Done' entries? [Yn] " yn
+            case $yn in
+             [Yy]* )
+                for i in $(seq 1 ${config[todo_count]}); do
+                    if [ "${config[todo_status_$i]}" = "DONE" ]; then
+                        entry=${config["todo_$i"]}
+                        unset config["todo_$i"]
+                        unset config["todo_status_$i"]
+                        echo "Entry '$entry' has been removed."
+                    fi
+                done
+                break
+                ;;
+             [Nn]* ) break;;
+             * ) echo "Please answer yes (Y) or no (n).";;
+            esac
+        done
+        ;;
     "todo") # Marks task as ToDo
         index="$2"
         entry=${config["todo_$index"]}
@@ -104,15 +126,8 @@ case "$mode" in
         ;;
 esac
 
+# Saving configuration file
 touch $FILE
-
-#count=${config[todo_count]}
-#echo "todo_count=$count" > $FILE
-#for i in $(seq 1 $count); do
-#    echo "todo_$i=${config[todo_$i]}" >> $FILE
-#    echo "todo_status_$i=${config[todo_status_$i]}" >> $FILE
-#done
-
 index=0
 echo "" > $FILE;
 for i in $(seq 1 ${config[todo_count]}); do
