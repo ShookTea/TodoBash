@@ -41,6 +41,10 @@ if [ -f $FILE ]; then
     done < $FILE
 fi
 
+for i in "${@:2}"; do
+    echo $i
+done
+
 case "$mode" in
     "help") # Displaying help message
         echo "Usage: todo [options <arg>]"
