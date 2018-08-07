@@ -81,7 +81,7 @@ case "$mode" in
         echo
         echo "Use 'todo --help' to get list of options."
         ;;
-    "listScope") # Showing list of ToDos
+    "listScope") # Showing list of ToDos with scopes
         scope="$2"
         if [[ "$scope" = 'todo' || "$scope" = 't' || "$scope" = '' ]]; then
             echo "To do:"
