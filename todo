@@ -41,10 +41,6 @@ if [ -f $FILE ]; then
     done < $FILE
 fi
 
-for i in "${@:2}"; do
-    echo $i
-done
-
 case "$mode" in
     "help") # Displaying help message
         echo "Usage: todo [options <arg>]"
@@ -111,11 +107,12 @@ case "$mode" in
         echo "Created '${@:2}' entry."
         ;;
     "remove") # Removes entry by id
-        index="$2"
-        entry=${config["todo_$index"]}
-        unset config["todo_$index"]
-        unset config["todo_status_$index"]
-        echo "Entry '$entry' has been removed."
+        for index in "${@:2}"; do
+            entry=${config["todo_$index"]}
+            unset config["todo_$index"]
+            unset config["todo_status_$index"]
+            echo "Entry '$entry' has been removed."
+        done
         ;;
     "removeDone") # Removes all Done entries
         while true; do
