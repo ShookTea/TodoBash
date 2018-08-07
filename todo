@@ -9,6 +9,8 @@ if [ "$#" -ne 0 ]; then
         "-c")           mode=create ;;
         "--help")       mode=help ;;
         "-h")           mode=help ;;
+        "--remove")     mode=remove ;;
+        "-r")           mode=remove ;;
         *)              mode=help ;;
     esac
 else
@@ -35,6 +37,7 @@ case "$mode" in
         echo "Options:"
         echo "    -c, --create <text>       - creates new entry"
         echo "    -h, --help                - displays help message"
+        echo "    -r, --remove <id>         - removes entry by its ID number"
         ;;
     "list") # Showing list of ToDos
         echo "To do:"
@@ -58,6 +61,7 @@ case "$mode" in
             fi
         done
         echo
+        echo "Use 'todo --help' to get list of options"
         ;;
     "create") # Creating new element on list
         index=${config[todo_count]}
@@ -67,6 +71,12 @@ case "$mode" in
         config[todo_count]="$index"
         echo "Created '${@:2}' entry"
         ;;
+    "remove") # Removes entry by id
+        index="$2"
+        entry=${config["todo_$index"]}
+        unset config["todo_$index"]
+        unset config["todo_status_$index"]
+        echo "Entry '$entry' has been removed"
 esac
 
 touch $FILE
