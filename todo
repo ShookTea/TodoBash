@@ -14,12 +14,27 @@ fi
 
 case "$mode" in
     "help")
-        echo "Usage: todo [mode <arg>]"
+        echo "Usage: todo [options <arg>]"
+        echo "Options:"
+        echo "    -c, --create <text>       - creates new entry"
+        echo "    -h, --help                - displays help message"
         ;;
     "list")
-        echo "Print"
-        echo "some"
-        echo "list"
+        typeset -A config
+        config=(
+            [todo_count]="0"
+        )
+        if [ -f /etc/todo_list.conf ]; then
+            while read line; do
+                if echo $line | grep -F = &>/dev/null; then
+                    varname=$(echo "$line" | cut -d '=' -f 1)
+                    config[$varname]=$(echo "$line" | cut -d '=' -f 2-)
+                fi
+            done < /etc/todo_list.conf
+        fi
+        for i in $(seq 1 ${config[todo_count]}); do
+            echo $i
+        done
         ;;
     "create")
         echo "Created"
