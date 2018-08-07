@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "$#" -ne 0 ]; then
+    case "$1" in
+        "--create")     mode=create ;;
+        "-c")           mode=create ;;
+        "--help")       mode=help ;;
+        "-h")           mode=help ;;
+        *)              mode=help ;;
+    esac
+else
+    mode=list
+fi
+
+case "$mode" in
+    "help")
+        echo "Usage: todo [mode <arg>]"
+        ;;
+    "list")
+        echo "Print"
+        echo "some"
+        echo "list"
+        ;;
+    "create")
+        echo "Created"
+esac
