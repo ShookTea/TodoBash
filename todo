@@ -13,6 +13,8 @@ if [ "$#" -ne 0 ]; then
         "-D")            mode=doing ;;
         "--help")        mode=help ;;
         "-h")            mode=help ;;
+        "--list")        mode=listScope ;;
+        "-l")            mode=listScope ;;
         "--remove")      mode=remove ;;
         "-r")            mode=remove ;;
         "--remove-done") mode=removeDone ;;
@@ -43,9 +45,17 @@ case "$mode" in
     "help") # Displaying help message
         echo "Usage: todo [options <arg>]"
         echo "Options:"
-        echo "    -c, --create <text>       - creates new entry"
         echo "    -h, --help                - displays help message"
-        echo "    -r, --remove <id>         - removes entry by its ID number"
+        echo
+        echo "    -c, --create <text>       - creates new entry"
+        echo "    -l, --list <scope>        - shows part of list, where 'scope' can be empty,"
+        echo "                                'todo'/'t', 'doing'/'D' or 'done'/'D'"
+        echo "    -r, --remove <id>         - removes task by its ID number"
+        echo "    -R, --remove-done         - removes all 'Done' tasks"
+        echo
+        echo "    -d, --done <id>           - marks task as 'Done'"
+        echo "    -D, --doing <id>          - marks tasks as 'Doing'"
+        echo "    -t, --todo <id>           - marks tasks as 'To Do'"
         ;;
     "list") # Showing list of ToDos
         echo "To do:"
@@ -70,6 +80,33 @@ case "$mode" in
         done
         echo
         echo "Use 'todo --help' to get list of options."
+        ;;
+    "listScope") # Showing list of ToDos
+        scope="$2"
+        if [[ "$scope" = 'todo' || "$scope" = 't' || "$scope" = '' ]]; then
+            echo "To do:"
+            for i in $(seq 1 ${config[todo_count]}); do
+                if [[ "${config[todo_status_$i]}" = "TODO" ]]; then
+                    echo -e "  [ ] $i.\t\t ${config[todo_$i]}"
+                fi
+            done
+        fi
+        if [[ "$scope" = 'doing' || "$scope" = 'D' || "$scope" = '' ]]; then
+            echo "Doing:"
+            for i in $(seq 1 ${config[todo_count]}); do
+                if [ "${config[todo_status_$i]}" = "DOING" ]; then
+                    echo -e "  [O] $i.\t\t ${config[todo_$i]}"
+                fi
+            done
+        fi
+        if [[ "$scope" = 'done' || "$scope" = 'd' || "$scope" = '' ]]; then
+            echo "Done:"
+            for i in $(seq 1 ${config[todo_count]}); do
+                if [ "${config[todo_status_$i]}" = "DONE" ]; then
+                    echo -e "  [X] $i.\t\t ${config[todo_$i]}"
+                fi
+            done
+        fi
         ;;
     "create") # Creating new element on list
         index=${config[todo_count]}
