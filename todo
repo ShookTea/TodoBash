@@ -1,2 +1,111 @@
 #!/bin/bash
-./todo.sh "$@"
+
+FILE=~/.todo_list.todo
+
+# checking flags and setting mode based on these flags
+if [ "$#" -ne 0 ]; then
+    case "$1" in
+        "--create")     mode=create ;;
+        "-c")           mode=create ;;
+        "--done")       mode=done ;;
+        "-d")           mode=done ;;
+        "--help")       mode=help ;;
+        "-h")           mode=help ;;
+        "--remove")     mode=remove ;;
+        "-r")           mode=remove ;;
+        *)              mode=help ;;
+    esac
+else
+    mode=list
+fi
+
+# loading configuration from /etc/todo_list.conf
+typeset -A config
+config=(
+    [todo_count]="0"
+)
+if [ -f $FILE ]; then
+    while read line; do
+        if echo $line | grep -F = &>/dev/null; then
+            varname=$(echo "$line" | cut -d '=' -f 1)
+            config[$varname]=$(echo "$line" | cut -d '=' -f 2-)
+        fi
+    done < $FILE
+fi
+
+case "$mode" in
+    "help") # Displaying help message
+        echo "Usage: todo [options <arg>]"
+        echo "Options:"
+        echo "    -c, --create <text>       - creates new entry"
+        echo "    -h, --help                - displays help message"
+        echo "    -r, --remove <id>         - removes entry by its ID number"
+        ;;
+    "list") # Showing list of ToDos
+        echo "To do:"
+        for i in $(seq 1 ${config[todo_count]}); do
+            if [ "${config[todo_status_$i]}" = "TODO" ]; then
+                echo -e "  [ ] $i.\t\t ${config[todo_$i]}"
+            fi
+        done
+        echo
+        echo "Doing:"
+        for i in $(seq 1 ${config[todo_count]}); do
+            if [ "${config[todo_status_$i]}" = "DOING" ]; then
+                echo -e "  [O] $i.\t\t ${config[todo_$i]}"
+            fi
+        done
+        echo
+        echo "Done:"
+        for i in $(seq 1 ${config[todo_count]}); do
+            if [ "${config[todo_status_$i]}" = "DONE" ]; then
+                echo -e "  [X] $i.\t\t ${config[todo_$i]}"
+            fi
+        done
+        echo
+        echo "Use 'todo --help' to get list of options."
+        ;;
+    "create") # Creating new element on list
+        index=${config[todo_count]}
+        index=$((index+1))
+        config["todo_$index"]="${@:2}"
+        config["todo_status_$index"]="TODO"
+        config[todo_count]="$index"
+        echo "Created '${@:2}' entry."
+        ;;
+    "remove") # Removes entry by id
+        index="$2"
+        entry=${config["todo_$index"]}
+        unset config["todo_$index"]
+        unset config["todo_status_$index"]
+        echo "Entry '$entry' has been removed."
+        ;;
+    "done") # Marks task as done
+        index="$2"
+        entry=${config["todo_$index"]}
+        config["todo_status_$index"]="DONE"
+        echo "Entry '$entry' is now considered Done."
+        ;;
+esac
+
+touch $FILE
+
+#count=${config[todo_count]}
+#echo "todo_count=$count" > $FILE
+#for i in $(seq 1 $count); do
+#    echo "todo_$i=${config[todo_$i]}" >> $FILE
+#    echo "todo_status_$i=${config[todo_status_$i]}" >> $FILE
+#done
+
+index=0
+echo "" > $FILE;
+for i in $(seq 1 ${config[todo_count]}); do
+    value="${config[todo_$i]}"
+    status="${config[todo_status_$i]}"
+    if [[ "$status" = "TODO" || "$status" = "DOING" || "$status" = "DONE" ]]; then
+        index=$((index+1))
+        echo "todo_$index=$value" >> $FILE
+        echo "todo_status_$index=$status" >> $FILE
+    fi
+done
+echo "todo_count=$index" >> $FILE
