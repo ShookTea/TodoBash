@@ -60,7 +60,13 @@ case "$mode" in
         echo
         ;;
     "create") # Creating new element on list
-        echo "Created"
+        index=${config[todo_count]}
+        index=$((index+1))
+        config["todo_$index"]="${@:2}"
+        config["todo_status_$index"]="TODO"
+        config[todo_count]="$index"
+        echo "Created '${@:2}' entry"
+        ;;
 esac
 
 touch $FILE
