@@ -80,7 +80,9 @@ case "$mode" in
 esac
 
 touch $FILE
-echo "" > $FILE
-for index in ${!config[*]}; do
-    echo "$index=${config[$index]}" >> $FILE
+count=${config[todo_count]}
+echo "todo_count=$count" > $FILE
+for i in $(seq 1 $count); do
+    echo "todo_$i=${config[todo_$i]}" >> $FILE
+    echo "todo_status_$i=${config[todo_status_$i]}" >> $FILE
 done
