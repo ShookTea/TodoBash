@@ -9,10 +9,14 @@ if [ "$#" -ne 0 ]; then
         "-c")           mode=create ;;
         "--done")       mode=done ;;
         "-d")           mode=done ;;
+        "--doing")      mode=doing ;;
+        "-D")           mode=doing ;;
         "--help")       mode=help ;;
         "-h")           mode=help ;;
         "--remove")     mode=remove ;;
         "-r")           mode=remove ;;
+        "--todo")       mode=todo ;;
+        "-t")           mode=todo ;;
         *)              mode=help ;;
     esac
 else
@@ -80,7 +84,19 @@ case "$mode" in
         unset config["todo_status_$index"]
         echo "Entry '$entry' has been removed."
         ;;
-    "done") # Marks task as done
+    "todo") # Marks task as ToDo
+        index="$2"
+        entry=${config["todo_$index"]}
+        config["todo_status_$index"]="TODO"
+        echo "Entry '$entry' is now considered To Do."
+        ;;
+    "doing") # Marks task as Doing
+        index="$2"
+        entry=${config["todo_$index"]}
+        config["todo_status_$index"]="DOING"
+        echo "Entry '$entry' is now considered Doing."
+        ;;
+    "done") # Marks task as Done
         index="$2"
         entry=${config["todo_$index"]}
         config["todo_status_$index"]="DONE"
