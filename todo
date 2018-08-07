@@ -135,22 +135,25 @@ case "$mode" in
         done
         ;;
     "todo") # Marks task as ToDo
-        index="$2"
-        entry=${config["todo_$index"]}
-        config["todo_status_$index"]="TODO"
-        echo "Entry '$entry' is now considered To Do."
+        for index in "${@:2}"; do
+            entry=${config["todo_$index"]}
+            config["todo_status_$index"]="TODO"
+            echo "Entry '$entry' is now considered To Do."
+        done
         ;;
     "doing") # Marks task as Doing
-        index="$2"
-        entry=${config["todo_$index"]}
-        config["todo_status_$index"]="DOING"
-        echo "Entry '$entry' is now considered Doing."
+        for index in "${@:2}"; do
+            entry=${config["todo_$index"]}
+            config["todo_status_$index"]="DOING"
+            echo "Entry '$entry' is now considered Doing."
+        done
         ;;
     "done") # Marks task as Done
-        index="$2"
-        entry=${config["todo_$index"]}
-        config["todo_status_$index"]="DONE"
-        echo "Entry '$entry' is now considered Done."
+        for index in "${@:2}"; do
+            entry=${config["todo_$index"]}
+            config["todo_status_$index"]="DONE"
+            echo "Entry '$entry' is now considered Done."
+        done
         ;;
 esac
 
