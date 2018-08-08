@@ -76,12 +76,18 @@ case "$mode" in
         done
         echo
         sum=$((todoCount+doingCount+doneCount))
-        todoPercent=$(echo "scale=2; ($todoCount*100)/$sum" | bc)
-        doingPercent=$(echo "scale=2; ($doingCount*100)/$sum" | bc)
-        donePercent=$(echo "scale=2; ($doneCount*100)/$sum" | bc)
+        if [ "$sum" = "0" ]; then
+            todoPercent="0.00"
+            doingPercent="0.00"
+            donePercent="100.00"
+        else
+            todoPercent=$(echo "scale=2; ($todoCount*100)/$sum" | bc)
+            doingPercent=$(echo "scale=2; ($doingCount*100)/$sum" | bc)
+            donePercent=$(echo "scale=2; ($doneCount*100)/$sum" | bc)
+        fi
         echo "Tasks to do: $todoCount ($todoPercent %)"
         echo "Tasks doing: $doingCount ($doingPercent %)"
-        echo "Tasks done:  $doneCount ($donePercent %)"
+        echo "Tasks done: $doneCount ($donePercent %)"
         echo "Use 'todo --help' to get list of options."
         ;;
     "listScope") # Showing list of ToDos with scopes
