@@ -49,7 +49,7 @@ case "$mode" in
         echo
         echo "    -c, --create <text>       - creates new entry"
         echo "    -l, --list <scope>        - shows part of list, where 'scope' can be empty,"
-        echo "                                'todo'/'t', 'doing'/'D' or 'done'/'D'"
+        echo "                                'todo'/'t', 'doing'/'D' or 'done'/'d'"
         echo "    -r, --remove <id>         - removes task by its ID number"
         echo "    -R, --remove-done         - removes all 'Done' tasks"
         echo
@@ -64,13 +64,13 @@ case "$mode" in
         doneCount=0
         for i in $(seq 1 ${config[todo_count]}); do
             if [ "${config[todo_status_$i]}" = "TODO" ]; then
-                echo -e "  [ ] $i.\t\t ${config[todo_$i]}"
+                echo -e "\e[91m  [ ] \e[1m$i.\t\t ${config[todo_$i]}\e[0m"
                 todoCount=$((todoCount+1))
             elif [ "${config[todo_status_$i]}" = "DOING" ]; then
-                echo -e "  [O] $i.\t\t ${config[todo_$i]}"
+                echo -e "\e[93m  [O] \e[1m$i.\t\t ${config[todo_$i]}\e[0m"
                 doingCount=$((doingCount+1))
             elif [ "${config[todo_status_$i]}" = "DONE" ]; then
-                echo -e "  [X] $i.\t\t ${config[todo_$i]}"
+                echo -e "\e[92m  [X] \e[1m$i.\t\t ${config[todo_$i]}\e[0m"
                 doneCount=$((doneCount+1))
             fi
         done
