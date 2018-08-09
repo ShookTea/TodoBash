@@ -53,6 +53,7 @@ case "$mode" in
         echo "                                'todo'/'t', 'doing'/'D' or 'done'/'d'"
         echo "    -r, --remove <id>         - removes task by its ID number"
         echo "    -R, --remove-done         - removes all 'Done' tasks"
+        echo "        --rename <id> <text>  - changes text of given entry"
         echo
         echo "    -d, --done <id>           - marks task as 'Done'"
         echo "    -D, --doing <id>          - marks tasks as 'Doing'"
