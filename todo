@@ -19,6 +19,7 @@ if [ "$#" -ne 0 ]; then
         "-r")            mode=remove ;;
         "--remove-done") mode=removeDone ;;
         "-R")            mode=removeDone ;;
+        "--rename")      mode=rename ;;
         "--todo")        mode=todo ;;
         "-t")            mode=todo ;;
         *)               mode=help ;;
@@ -132,6 +133,13 @@ case "$mode" in
             unset config["todo_status_$index"]
             echo "Entry '$entry' has been removed."
         done
+        ;;
+    "rename") # Renames given ID
+        index="$2"
+        newName="${@:3}"
+        oldValue="${config[todo_$index]}"
+        config["todo_$index"]=$newName
+        echo "Renamed '$oldValue' to '$newName'"
         ;;
     "removeDone") # Removes all Done entries
         while true; do
